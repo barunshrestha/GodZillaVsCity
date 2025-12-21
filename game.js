@@ -377,14 +377,14 @@
     ctx.fill();
     ctx.globalAlpha = 1;
 
-    // Body silhouette (black/dark Godzilla)
-    ctx.fillStyle = "#0b0f14";
+    // Body silhouette (pure black Godzilla)
+    ctx.fillStyle = "#000000";
     ctx.beginPath();
     ctx.roundRect(gx, gy, w * 0.68, h, 18);
     ctx.fill();
 
     // Head
-    ctx.fillStyle = "#121821";
+    ctx.fillStyle = "#000000";
     ctx.beginPath();
     ctx.roundRect(gx + w * 0.45, gy + 12, w * 0.44, 34, 14);
     ctx.fill();
@@ -399,8 +399,8 @@
     ctx.arc(gx + w * 0.79, gy + 28, 1.3, 0, Math.PI * 2);
     ctx.fill();
 
-    // Dorsal spikes (glowy blue)
-    ctx.fillStyle = "#66f2ff";
+    // Dorsal spikes (black, with subtle blue glow for readability)
+    ctx.fillStyle = "#000000";
     for (let i = 0; i < 6; i++) {
       const px = gx + 8 + i * 10;
       const py = gy + 8 + i * 12;
@@ -410,10 +410,17 @@
       ctx.lineTo(px + 16, py + 18);
       ctx.closePath();
       ctx.fill();
+
+      ctx.globalAlpha = 0.22;
+      ctx.strokeStyle = "rgba(120, 230, 255, 1)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+      ctx.lineWidth = 1;
     }
 
     // Arms
-    ctx.fillStyle = "#0f141b";
+    ctx.fillStyle = "#000000";
     ctx.beginPath();
     ctx.roundRect(gx + 10, gy + 44, 22, 18, 8);
     ctx.fill();
@@ -422,7 +429,7 @@
     ctx.fill();
 
     // Tail
-    ctx.strokeStyle = "#0f141b";
+    ctx.strokeStyle = "#000000";
     ctx.lineWidth = 10;
     ctx.lineCap = "round";
     ctx.beginPath();
