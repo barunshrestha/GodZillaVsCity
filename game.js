@@ -132,8 +132,8 @@
   let buildings = [];
   /** @type {Array<{x:number,y:number,vx:number,vy:number,r:number,ttl:number}>} */
   let missiles = [];
-  /** @type {Array<{x:number,y:number,vx:number,vy:number,r:number,ttl:number}>} */
-  let fireballs = [];
+  /** @type {Array<{x1:number,y1:number,x2:number,y2:number,w:number,ttl:number}>} */
+  let heatRays = [];
   /** @type {Array<{x:number,y:number,r:number,t:number,ttl:number,color:string}>} */
   let explosions = [];
 
@@ -179,7 +179,7 @@
     recomputeWorld();
     createBuildings();
     missiles = [];
-    fireballs = [];
+    heatRays = [];
     explosions = [];
 
     tank = {
@@ -377,14 +377,14 @@
     ctx.fill();
     ctx.globalAlpha = 1;
 
-    // Body silhouette
-    ctx.fillStyle = "#1faa61";
+    // Body silhouette (black/dark Godzilla)
+    ctx.fillStyle = "#0b0f14";
     ctx.beginPath();
     ctx.roundRect(gx, gy, w * 0.68, h, 18);
     ctx.fill();
 
     // Head
-    ctx.fillStyle = "#23c86f";
+    ctx.fillStyle = "#121821";
     ctx.beginPath();
     ctx.roundRect(gx + w * 0.45, gy + 12, w * 0.44, 34, 14);
     ctx.fill();
@@ -399,8 +399,8 @@
     ctx.arc(gx + w * 0.79, gy + 28, 1.3, 0, Math.PI * 2);
     ctx.fill();
 
-    // Dorsal spikes
-    ctx.fillStyle = "#39f6c0";
+    // Dorsal spikes (glowy blue)
+    ctx.fillStyle = "#66f2ff";
     for (let i = 0; i < 6; i++) {
       const px = gx + 8 + i * 10;
       const py = gy + 8 + i * 12;
@@ -413,7 +413,7 @@
     }
 
     // Arms
-    ctx.fillStyle = "#1a9e58";
+    ctx.fillStyle = "#0f141b";
     ctx.beginPath();
     ctx.roundRect(gx + 10, gy + 44, 22, 18, 8);
     ctx.fill();
@@ -422,7 +422,7 @@
     ctx.fill();
 
     // Tail
-    ctx.strokeStyle = "#1a9e58";
+    ctx.strokeStyle = "#0f141b";
     ctx.lineWidth = 10;
     ctx.lineCap = "round";
     ctx.beginPath();
@@ -449,16 +449,32 @@
       ctx.globalAlpha = 1;
     }
 
-    // Fireballs
-    for (const f of fireballs) {
-      const grd = ctx.createRadialGradient(f.x, f.y, 1, f.x, f.y, f.r);
-      grd.addColorStop(0, "rgba(255,255,255,0.95)");
-      grd.addColorStop(0.45, "rgba(255,170,40,0.9)");
-      grd.addColorStop(1, "rgba(255,64,64,0.8)");
-      ctx.fillStyle = grd;
+    // Heat rays (beam). "Longer but half length" => beam style, length ~ half screen.
+    for (const r of heatRays) {
+      const p = clamp(r.ttl / 0.45, 0, 1);
+      const width = r.w * lerp(0.75, 1, p);
+
+      // Glow underlay
+      ctx.globalAlpha = 0.25;
+      ctx.strokeStyle = "rgba(120, 230, 255, 1)";
+      ctx.lineWidth = width * 2.6;
+      ctx.lineCap = "round";
       ctx.beginPath();
-      ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.moveTo(r.x1, r.y1);
+      ctx.lineTo(r.x2, r.y2);
+      ctx.stroke();
+
+      // Core beam
+      ctx.globalAlpha = 0.9;
+      ctx.strokeStyle = "rgba(220, 250, 255, 1)";
+      ctx.lineWidth = width;
+      ctx.beginPath();
+      ctx.moveTo(r.x1, r.y1);
+      ctx.lineTo(r.x2, r.y2);
+      ctx.stroke();
+
+      ctx.globalAlpha = 1;
+      ctx.lineWidth = 1;
     }
   }
 
@@ -508,24 +524,33 @@
   }
 
   function spawnFireball() {
-    const startX = godzilla.x + godzilla.w * 0.72;
+    // (removed) replaced by heat ray
+  }
+
+  function spawnHeatRay() {
+    const startX = godzilla.x + godzilla.w * 0.86;
     const startY = godzilla.y + 34;
+
     const targetX = tank.x + tank.w * 0.5;
-    const targetY = tank.y + tank.h * 0.45;
+    const targetY = tank.y + tank.h * 0.5;
+
     let dx = targetX - startX;
     let dy = targetY - startY;
     const len = Math.hypot(dx, dy) || 1;
     dx /= len;
     dy /= len;
 
-    const speed = 320;
-    fireballs.push({
-      x: startX,
-      y: startY,
-      vx: dx * speed,
-      vy: dy * speed,
-      r: 8,
-      ttl: 3.2,
+    const maxLen = W() * 0.5; // half-screen length
+    const endX = startX + dx * maxLen;
+    const endY = startY + dy * maxLen;
+
+    heatRays.push({
+      x1: startX,
+      y1: startY,
+      x2: endX,
+      y2: endY,
+      w: 7,
+      ttl: 0.45,
     });
   }
 
@@ -608,11 +633,11 @@
       const dir = Math.sign(targetX - godzilla.x);
       godzilla.x += dir * speed * dt;
 
-      // Fire at the tank.
+      // Heat ray at the tank.
       godzilla.fireCd = Math.max(0, godzilla.fireCd - dt);
       if (godzilla.fireCd <= 0) {
-        spawnFireball();
-        godzilla.fireCd = rand(0.7, 1.05);
+        spawnHeatRay();
+        godzilla.fireCd = rand(1.0, 1.45);
       }
       return;
     }
@@ -648,22 +673,35 @@
       m.ttl -= dt;
     }
 
-    // Fireballs
-    for (const f of fireballs) {
-      f.x += f.vx * dt;
-      f.y += f.vy * dt;
-      f.ttl -= dt;
+    // Heat rays
+    for (const r of heatRays) {
+      r.ttl -= dt;
     }
 
     // Explosions
     for (const ex of explosions) ex.t += dt;
 
     missiles = missiles.filter((m) => m.ttl > 0 && m.x > -40 && m.x < W() + 40 && m.y > -40 && m.y < H() + 40);
-    fireballs = fireballs.filter((f) => f.ttl > 0 && f.x > -80 && f.x < W() + 80 && f.y > -80 && f.y < H() + 80);
+    heatRays = heatRays.filter((r) => r.ttl > 0);
     explosions = explosions.filter((ex) => ex.t < ex.ttl);
   }
 
-  function handleHits() {
+  function segmentHitsRectWithRadius(x1, y1, x2, y2, radius, rx, ry, rw, rh) {
+    // Sample points along the segment and treat them as circles.
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const len = Math.hypot(dx, dy) || 1;
+    const steps = Math.max(8, Math.floor(len / 24));
+    for (let i = 0; i <= steps; i++) {
+      const t = i / steps;
+      const px = x1 + dx * t;
+      const py = y1 + dy * t;
+      if (circleHitsRect(px, py, radius, rx, ry, rw, rh)) return true;
+    }
+    return false;
+  }
+
+  function handleHits(dt) {
     if (game.phase !== GamePhase.running && game.phase !== GamePhase.winFlee) return;
 
     // Missiles hit Godzilla
@@ -679,12 +717,23 @@
       }
     }
 
-    // Fireballs hit Tank
-    for (const f of fireballs) {
-      if (circleHitsRect(f.x, f.y, f.r, tank.x, tank.y, tank.w, tank.h)) {
-        f.ttl = -1;
-        boom(f.x, f.y, 22, "rgba(255,120,80,0.8)");
-        tank.hp = Math.max(0, tank.hp - 9);
+    // Heat rays hit Tank (damage while active)
+    for (const r of heatRays) {
+      const hit = segmentHitsRectWithRadius(
+        r.x1,
+        r.y1,
+        r.x2,
+        r.y2,
+        r.w * 0.55,
+        tank.x,
+        tank.y,
+        tank.w,
+        tank.h
+      );
+      if (hit) {
+        // Gentle-but-dangerous continuous damage.
+        tank.hp = Math.max(0, tank.hp - 26 * dt);
+        if (Math.random() < 0.12) boom(tank.x + tank.w * 0.5, tank.y + tank.h * 0.5, 16, "rgba(120,230,255,0.55)");
       }
     }
   }
@@ -734,14 +783,14 @@
       updateGodzilla(dt);
       updateBuildings(dt);
       updateProjectiles(dt);
-      handleHits();
+      handleHits(dt);
       maybeEndGame();
     } else if (game.phase === GamePhase.winFlee) {
       // No more tank controls after win; just play the flee animation.
       updateGodzilla(dt);
       updateBuildings(dt);
       updateProjectiles(dt);
-      handleHits();
+      handleHits(dt);
       maybeEndGame();
     }
 
