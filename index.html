@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Godzilla: City Destruction (Kid-Friendly)</title>
+    <meta
+      name="description"
+      content="A kid-friendly Godzilla vs Tank city defense game. Use arrow keys to drive and space to shoot missiles!"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar" role="banner">
+        <div class="titleBlock">
+          <h1 class="title">Godzilla vs City</h1>
+          <p class="subtitle">
+            Godzilla emerges from the ocean and heads to New York. Drive the tank and
+            stop him!
+          </p>
+        </div>
+
+        <div class="controls">
+          <button id="startBtn" class="btn primary" type="button">Start</button>
+          <button id="restartBtn" class="btn" type="button" disabled>Restart</button>
+          <button id="pauseBtn" class="btn" type="button" disabled>Pause</button>
+        </div>
+      </header>
+
+      <main class="content" role="main">
+        <section class="hud" aria-label="Game status">
+          <div class="hudRow">
+            <div class="barGroup">
+              <div class="barLabel">Tank Health</div>
+              <div class="barOuter" aria-label="Tank health bar">
+                <div id="tankBar" class="barInner tank" style="width: 100%"></div>
+              </div>
+              <div id="tankPct" class="barPct">100%</div>
+            </div>
+
+            <div class="barGroup">
+              <div class="barLabel">Godzilla Health</div>
+              <div class="barOuter" aria-label="Godzilla health bar">
+                <div id="gBar" class="barInner godzilla" style="width: 100%"></div>
+              </div>
+              <div id="gPct" class="barPct">100%</div>
+            </div>
+          </div>
+
+          <div class="hint">
+            <span class="kbd">Arrow keys</span> move • <span class="kbd">Space</span>
+            shoots • On phones/tablets, use the on-screen buttons.
+          </div>
+        </section>
+
+        <section class="stage" aria-label="Game area">
+          <canvas id="game" width="960" height="540" aria-label="Game canvas"></canvas>
+
+          <div id="overlay" class="overlay" aria-live="polite">
+            <div class="overlayCard">
+              <div id="overlayTitle" class="overlayTitle">Ready?</div>
+              <div id="overlayBody" class="overlayBody">
+                Press <b>Start</b> to begin. Protect the city and make Godzilla flee
+                back to the ocean!
+              </div>
+              <div class="overlayActions">
+                <button id="overlayStart" class="btn primary" type="button">
+                  Start Game
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="touchControls" aria-label="Touch controls">
+          <div class="pad">
+            <button class="padBtn" data-action="up" type="button" aria-label="Move up">
+              ▲
+            </button>
+            <div class="padRow">
+              <button
+                class="padBtn"
+                data-action="left"
+                type="button"
+                aria-label="Move left"
+              >
+                ◀
+              </button>
+              <button
+                class="padBtn"
+                data-action="down"
+                type="button"
+                aria-label="Move down"
+              >
+                ▼
+              </button>
+              <button
+                class="padBtn"
+                data-action="right"
+                type="button"
+                aria-label="Move right"
+              >
+                ▶
+              </button>
+            </div>
+          </div>
+          <button
+            class="shootBtn"
+            data-action="shoot"
+            type="button"
+            aria-label="Shoot missile"
+          >
+            Shoot
+          </button>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div class="footerText">
+          Tip: Missiles track slightly toward Godzilla. Keep moving to dodge fire!
+        </div>
+      </footer>
+    </div>
+
+    <script src="./game.js" defer></script>
+  </body>
+</html>
