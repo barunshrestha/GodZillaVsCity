@@ -126,7 +126,7 @@
 
   /** @type {{x:number,y:number,w:number,h:number,speed:number,hp:number,fireCd:number}} */
   let tank;
-  /** @type {{x:number,y:number,w:number,h:number,hp:number,state:"emerging"|"rampage"|"flee",t:number,fireCd:number}} */
+  /** @type {{x:number,y:number,w:number,h:number,hp:number,state:"emerging"|"rampage"|"flee",t:number,fireCd:number,facing:1|-1}} */
   let godzilla;
   /** @type {Array<{x:number,y:number,w:number,h:number,hp:number,maxHp:number,hitFlash:number,winCols:number,winRows:number,winLit:boolean[]}>} */
   let buildings = [];
@@ -201,6 +201,7 @@
       state: "emerging",
       t: 0,
       fireCd: 0.85,
+      facing: 1,
     };
 
     game.time = 0;
@@ -367,6 +368,7 @@
     const gy = godzilla.y;
     const w = godzilla.w;
     const h = godzilla.h;
+    const facing = godzilla.facing ?? 1;
 
     // Shadow on ground (unless still below ground)
     const shadowAlpha = clamp((world.groundY - gy + h * 0.6) / 120, 0, 1);
@@ -377,33 +379,39 @@
     ctx.fill();
     ctx.globalAlpha = 1;
 
+    // Flip horizontally around Godzilla's center when facing left.
+    ctx.save();
+    ctx.translate(gx + w / 2, gy + h / 2);
+    ctx.scale(facing, 1);
+    ctx.translate(-w / 2, -h / 2);
+
     // Body silhouette (pure black Godzilla)
     ctx.fillStyle = "#000000";
     ctx.beginPath();
-    ctx.roundRect(gx, gy, w * 0.68, h, 18);
+    ctx.roundRect(0, 0, w * 0.68, h, 18);
     ctx.fill();
 
     // Head
     ctx.fillStyle = "#000000";
     ctx.beginPath();
-    ctx.roundRect(gx + w * 0.45, gy + 12, w * 0.44, 34, 14);
+    ctx.roundRect(w * 0.45, 12, w * 0.44, 34, 14);
     ctx.fill();
 
     // Eye
     ctx.fillStyle = "#e2f2ff";
     ctx.beginPath();
-    ctx.arc(gx + w * 0.78, gy + 28, 3.2, 0, Math.PI * 2);
+    ctx.arc(w * 0.78, 28, 3.2, 0, Math.PI * 2);
     ctx.fill();
     ctx.fillStyle = "#062a1a";
     ctx.beginPath();
-    ctx.arc(gx + w * 0.79, gy + 28, 1.3, 0, Math.PI * 2);
+    ctx.arc(w * 0.79, 28, 1.3, 0, Math.PI * 2);
     ctx.fill();
 
     // Dorsal spikes (black, with subtle blue glow for readability)
     ctx.fillStyle = "#000000";
     for (let i = 0; i < 6; i++) {
-      const px = gx + 8 + i * 10;
-      const py = gy + 8 + i * 12;
+      const px = 8 + i * 10;
+      const py = 8 + i * 12;
       ctx.beginPath();
       ctx.moveTo(px, py + 18);
       ctx.lineTo(px + 8, py);
@@ -422,10 +430,10 @@
     // Arms
     ctx.fillStyle = "#000000";
     ctx.beginPath();
-    ctx.roundRect(gx + 10, gy + 44, 22, 18, 8);
+    ctx.roundRect(10, 44, 22, 18, 8);
     ctx.fill();
     ctx.beginPath();
-    ctx.roundRect(gx + 18, gy + 64, 22, 18, 8);
+    ctx.roundRect(18, 64, 22, 18, 8);
     ctx.fill();
 
     // Tail
@@ -433,10 +441,12 @@
     ctx.lineWidth = 10;
     ctx.lineCap = "round";
     ctx.beginPath();
-    ctx.moveTo(gx + 10, gy + h - 18);
-    ctx.quadraticCurveTo(gx - 34, gy + h - 34, gx - 64, gy + h - 10);
+    ctx.moveTo(10, h - 18);
+    ctx.quadraticCurveTo(-34, h - 34, -64, h - 10);
     ctx.stroke();
     ctx.lineWidth = 1;
+
+    ctx.restore();
   }
 
   function drawProjectiles() {
@@ -629,6 +639,7 @@
       if (Math.abs(godzilla.y - riseTarget) < 1.2 && godzilla.t > 1.8) {
         godzilla.state = "rampage";
         godzilla.t = 0;
+        godzilla.facing = 1;
       }
       return;
     }
@@ -639,6 +650,7 @@
       const speed = 58;
       const dir = Math.sign(targetX - godzilla.x);
       godzilla.x += dir * speed * dt;
+      if (dir !== 0) godzilla.facing = /** @type {1|-1} */ (dir >= 0 ? 1 : -1);
 
       // Heat ray at the tank.
       godzilla.fireCd = Math.max(0, godzilla.fireCd - dt);
@@ -653,6 +665,7 @@
       // Run back to the ocean.
       const fleeSpeed = 170;
       const dir = -1;
+      godzilla.facing = -1;
       godzilla.x += dir * fleeSpeed * dt;
       // Sink slightly near the shoreline for a "back to ocean" feel.
       if (godzilla.x < world.shorelineX * 0.65) {
@@ -763,6 +776,7 @@
     if (godzilla.hp <= 0 && game.phase === GamePhase.running) {
       // Trigger flee animation instead of instant win.
       godzilla.state = "flee";
+      godzilla.facing = -1;
       game.phase = GamePhase.winFlee;
       godzilla.fireCd = 999;
       setOverlay(true, "You did it!", "Godzilla is fleeing back to the ocean… keep watching!", "Restart");
