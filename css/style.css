@@ -1,0 +1,206 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #0a0a1a;
+  overflow: hidden;
+  font-family: "Courier New", monospace;
+  image-rendering: pixelated;
+}
+
+#game-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+#game-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 40, 0.85);
+  color: #fff;
+  z-index: 10;
+  text-align: center;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Start screen */
+#start-screen h1 {
+  font-size: 4rem;
+  letter-spacing: 0.3em;
+  color: #ffcc00;
+  text-shadow: 4px 4px 0 #cc0000, -2px -2px 0 #0066ff;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: #aaaaff;
+  margin-bottom: 2rem;
+}
+
+.controls-info {
+  background: rgba(0, 0, 80, 0.6);
+  border: 2px solid #4466ff;
+  padding: 1.5rem 2rem;
+  margin-bottom: 2rem;
+  border-radius: 4px;
+}
+
+.controls-info p {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+}
+
+.key {
+  display: inline-block;
+  background: #333;
+  border: 2px solid #888;
+  border-radius: 4px;
+  padding: 2px 8px;
+  margin: 0 2px;
+  font-weight: bold;
+  color: #ffcc00;
+}
+
+#start-btn,
+#restart-btn {
+  background: linear-gradient(180deg, #ff4444, #cc0000);
+  border: 3px solid #ffcc00;
+  color: #fff;
+  font-family: "Courier New", monospace;
+  font-size: 1.4rem;
+  font-weight: bold;
+  padding: 0.8rem 2.5rem;
+  cursor: pointer;
+  letter-spacing: 0.15em;
+  transition: transform 0.1s;
+}
+
+#start-btn:hover,
+#restart-btn:hover {
+  transform: scale(1.05);
+}
+
+.hint {
+  margin-top: 1.5rem;
+  color: #8888cc;
+  font-size: 0.9rem;
+}
+
+/* Countdown */
+#countdown {
+  background: transparent;
+  pointer-events: none;
+}
+
+#countdown-text {
+  font-size: 8rem;
+  font-weight: bold;
+  color: #ffcc00;
+  text-shadow: 4px 4px 0 #cc0000;
+  animation: pulse 0.8s ease-in-out;
+}
+
+@keyframes pulse {
+  0% { transform: scale(2); opacity: 0; }
+  50% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0.8); opacity: 0.5; }
+}
+
+/* HUD */
+#hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.hud-top {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding: 1rem;
+}
+
+.hud-panel {
+  background: rgba(0, 0, 60, 0.7);
+  border: 2px solid #4466ff;
+  padding: 0.5rem 1.2rem;
+  text-align: center;
+  min-width: 100px;
+}
+
+.hud-panel .label {
+  display: block;
+  font-size: 0.7rem;
+  color: #8888ff;
+  letter-spacing: 0.2em;
+}
+
+.hud-panel span:last-child {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #ffcc00;
+}
+
+.hud-bottom {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 2rem;
+}
+
+.speedometer {
+  background: rgba(0, 0, 60, 0.7);
+  border: 2px solid #4466ff;
+  padding: 0.8rem 1.5rem;
+  text-align: center;
+}
+
+#speed-display {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #ffcc00;
+}
+
+.speedometer .unit {
+  display: block;
+  font-size: 0.7rem;
+  color: #8888ff;
+  letter-spacing: 0.2em;
+}
+
+/* Finish screen */
+#finish-screen h1 {
+  font-size: 3.5rem;
+  color: #ffcc00;
+  text-shadow: 3px 3px 0 #cc0000;
+  margin-bottom: 1rem;
+}
+
+#finish-message {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+#finish-time {
+  font-size: 1.2rem;
+  color: #aaaaff;
+  margin-bottom: 2rem;
+}
