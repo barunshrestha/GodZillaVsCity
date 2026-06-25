@@ -7,10 +7,21 @@ A retro-style two-player fighting game featuring giant monster (kaiju) character
 Open `index.html` in a browser, or run a local server:
 
 ```bash
+./serve.sh
+```
+
+Or manually:
+
+```bash
 python3 -m http.server 8080
 ```
 
-Then visit http://localhost:8080
+If you see `Address already in use`, port 8080 is taken — use `./serve.sh` (picks a free port) or stop the other process:
+
+```bash
+lsof -i :8080   # find the PID
+kill <PID>      # stop it, then retry
+```
 
 ## Controls
 
