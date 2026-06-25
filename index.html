@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kaiju Clash — Retro Fighting Game</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="game-container">
+    <canvas id="game-canvas" width="960" height="540"></canvas>
+
+    <!-- Title Screen -->
+    <div id="screen-title" class="screen active">
+      <h1>KAIJU CLASH</h1>
+      <p class="subtitle">Monsters of the Pacific</p>
+      <div class="kaiju-preview">
+        <div class="preview-card" data-kaiju="gorath">
+          <canvas class="preview-canvas" width="80" height="80" data-kaiju="gorath"></canvas>
+          <span>GORATH</span>
+        </div>
+        <div class="preview-card" data-kaiju="mothra">
+          <canvas class="preview-canvas" width="80" height="80" data-kaiju="mothra"></canvas>
+          <span>MOTHRA-X</span>
+        </div>
+        <div class="preview-card" data-kaiju="kraken">
+          <canvas class="preview-canvas" width="80" height="80" data-kaiju="kraken"></canvas>
+          <span>KRAKEN</span>
+        </div>
+        <div class="preview-card" data-kaiju="mech">
+          <canvas class="preview-canvas" width="80" height="80" data-kaiju="mech"></canvas>
+          <span>MECH-KAI</span>
+        </div>
+      </div>
+      <p class="blink">PRESS ENTER TO FIGHT</p>
+      <div class="controls-info">
+        <div class="player-controls">
+          <h3>PLAYER 1</h3>
+          <p>WASD — Move / Jump / Crouch</p>
+          <p>Q — Punch &nbsp; E — Kick &nbsp; R — Special</p>
+        </div>
+        <div class="player-controls">
+          <h3>PLAYER 2</h3>
+          <p>↑↓←→ — Move / Jump / Crouch</p>
+          <p>U — Punch &nbsp; I — Kick &nbsp; O — Special</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Character Select -->
+    <div id="screen-select" class="screen">
+      <h2>SELECT YOUR KAIJU</h2>
+      <div class="select-layout">
+        <div class="select-panel" id="p1-select">
+          <h3>PLAYER 1</h3>
+          <div class="char-grid" data-player="1"></div>
+          <p class="selected-name" id="p1-name">GORATH</p>
+        </div>
+        <div class="select-vs">VS</div>
+        <div class="select-panel" id="p2-select">
+          <h3>PLAYER 2</h3>
+          <div class="char-grid" data-player="2"></div>
+          <p class="selected-name" id="p2-name">MOTHRA-X</p>
+        </div>
+      </div>
+      <p class="hint">P1: A/D select &nbsp;|&nbsp; P2: ←/→ select &nbsp;|&nbsp; ENTER to confirm</p>
+    </div>
+
+    <!-- Fight HUD (shown during battle) -->
+    <div id="hud" class="hidden">
+      <div class="hud-top">
+        <div class="health-bar-container p1">
+          <span class="player-label">P1</span>
+          <div class="health-bar-bg">
+            <div class="health-bar" id="p1-health"></div>
+          </div>
+          <span class="fighter-name" id="hud-p1-name">GORATH</span>
+        </div>
+        <div class="timer" id="timer">99</div>
+        <div class="health-bar-container p2">
+          <span class="fighter-name" id="hud-p2-name">MOTHRA-X</span>
+          <div class="health-bar-bg">
+            <div class="health-bar" id="p2-health"></div>
+          </div>
+          <span class="player-label">P2</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Round Announcement -->
+    <div id="announcement" class="hidden">
+      <span id="announce-text">ROUND 1</span>
+    </div>
+
+    <!-- Game Over -->
+    <div id="screen-gameover" class="screen">
+      <h2 id="winner-text">PLAYER 1 WINS!</h2>
+      <p class="blink">PRESS ENTER TO REMATCH</p>
+    </div>
+  </div>
+
+  <script src="js/kaiju-data.js"></script>
+  <script src="js/input.js"></script>
+  <script src="js/fighter.js"></script>
+  <script src="js/renderer.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>

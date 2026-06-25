@@ -1,0 +1,282 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #0a0a12;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: 'Press Start 2P', monospace;
+  overflow: hidden;
+}
+
+#game-container {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  box-shadow: 0 0 60px rgba(255, 60, 60, 0.3), 0 0 120px rgba(0, 100, 255, 0.15);
+  border: 4px solid #333;
+}
+
+#game-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  background: #111;
+}
+
+.screen {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 10;
+  text-align: center;
+  color: #fff;
+}
+
+.screen.active {
+  display: flex;
+}
+
+#screen-title h1 {
+  font-size: 48px;
+  color: #ff4444;
+  text-shadow: 4px 4px 0 #880000, 0 0 30px rgba(255, 68, 68, 0.6);
+  margin-bottom: 12px;
+  letter-spacing: 4px;
+}
+
+.subtitle {
+  font-size: 12px;
+  color: #88aacc;
+  margin-bottom: 30px;
+}
+
+.kaiju-preview {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 30px;
+}
+
+.preview-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 8px;
+  color: #aaa;
+}
+
+.preview-canvas {
+  border: 2px solid #444;
+  background: #1a1a2e;
+}
+
+.blink {
+  font-size: 14px;
+  color: #ffcc00;
+  animation: blink 1s step-end infinite;
+  margin-bottom: 24px;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+.controls-info {
+  display: flex;
+  gap: 60px;
+  font-size: 8px;
+  color: #888;
+  line-height: 2;
+}
+
+.player-controls h3 {
+  color: #ff6644;
+  margin-bottom: 8px;
+  font-size: 10px;
+}
+
+#screen-select h2 {
+  font-size: 20px;
+  color: #ffcc00;
+  margin-bottom: 30px;
+}
+
+.select-layout {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.select-panel h3 {
+  font-size: 12px;
+  margin-bottom: 16px;
+  color: #66aaff;
+}
+
+.select-panel:last-child h3 {
+  color: #ff6666;
+}
+
+.select-vs {
+  font-size: 36px;
+  color: #ff4444;
+  text-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+}
+
+.char-grid {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.char-option {
+  width: 80px;
+  height: 80px;
+  border: 3px solid #444;
+  background: #1a1a2e;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.1s;
+}
+
+.char-option.selected {
+  border-color: #ffcc00;
+  box-shadow: 0 0 15px rgba(255, 204, 0, 0.5);
+}
+
+.selected-name {
+  font-size: 12px;
+  color: #fff;
+  min-height: 20px;
+}
+
+.hint {
+  font-size: 8px;
+  color: #666;
+  margin-top: 30px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+#hud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+#hud:not(.hidden) {
+  display: block;
+}
+
+.hud-top {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  gap: 16px;
+}
+
+.health-bar-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.health-bar-container.p2 {
+  flex-direction: row-reverse;
+}
+
+.player-label {
+  font-size: 10px;
+  color: #888;
+}
+
+.fighter-name {
+  font-size: 8px;
+  color: #ccc;
+  min-width: 80px;
+}
+
+.health-bar-bg {
+  flex: 1;
+  height: 20px;
+  background: #222;
+  border: 2px solid #555;
+  overflow: hidden;
+}
+
+.health-bar {
+  height: 100%;
+  width: 100%;
+  transition: width 0.15s ease-out;
+}
+
+.p1 .health-bar {
+  background: linear-gradient(180deg, #44ff44, #008800);
+  float: left;
+}
+
+.p2 .health-bar {
+  background: linear-gradient(180deg, #ff4444, #880000);
+  float: right;
+}
+
+.timer {
+  font-size: 28px;
+  color: #ffcc00;
+  min-width: 60px;
+  text-align: center;
+  text-shadow: 2px 2px 0 #664400;
+}
+
+#announcement {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 8;
+  pointer-events: none;
+}
+
+#announcement:not(.hidden) {
+  display: flex;
+}
+
+#announce-text {
+  font-size: 48px;
+  color: #fff;
+  text-shadow: 4px 4px 0 #000, 0 0 40px rgba(255, 255, 255, 0.5);
+  animation: announce-pop 0.5s ease-out;
+}
+
+@keyframes announce-pop {
+  0% { transform: scale(2); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+#screen-gameover h2 {
+  font-size: 28px;
+  color: #ffcc00;
+  text-shadow: 3px 3px 0 #664400;
+  margin-bottom: 30px;
+}
