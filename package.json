@@ -1,0 +1,10 @@
+{
+  "name": "godzilla-vs-city",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A lightweight browser game where Godzilla smashes a city.",
+  "scripts": {
+    "start": "python3 -m http.server 3000",
+    "test": "node --check game.js"
+  }
+}
